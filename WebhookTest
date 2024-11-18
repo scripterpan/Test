@@ -1,0 +1,133 @@
+repeat task.wait(0.25) until game:IsLoaded();
+getgenv().Image = "rbxassetid://14670814118"; --put a asset id in here to make it work
+getgenv().ToggleUI = "LeftControl" -- This where you can Toggle the Fluent ui library
+
+task.spawn(function()
+    if not getgenv().LoadedMobileUI == true then getgenv().LoadedMobileUI = true
+        local OpenUI = Instance.new("ScreenGui");
+        local ImageButton = Instance.new("ImageButton");
+        local UICorner = Instance.new("UICorner");
+        OpenUI.Name = "OpenUI";
+        OpenUI.Parent = game:GetService("CoreGui");
+        OpenUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling;
+        ImageButton.Parent = OpenUI;
+        ImageButton.BackgroundColor3 = Color3.fromRGB(105,105,105);
+        ImageButton.BackgroundTransparency = 0.8
+        ImageButton.Position = UDim2.new(0.9,0,0.1,0);
+        ImageButton.Size = UDim2.new(0,50,0,50);
+        ImageButton.Image = getgenv().Image;
+        ImageButton.Draggable = true;
+        ImageButton.Transparency = 1;
+        UICorner.CornerRadius = UDim.new(0,200);
+        UICorner.Parent = ImageButton;
+        ImageButton.MouseButton1Click:Connect(function()
+            game:GetService("VirtualInputManager"):SendKeyEvent(true,getgenv().ToggleUI,false,game);
+        end)
+    end
+end)
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
+local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
+
+
+local Window = Fluent:CreateWindow({
+    Title = "Sol's RNG ",
+    SubTitle = "By Pann",
+    TabWidth = 160,
+    Size = UDim2.fromOffset(480, 320),
+    Acrylic = true, -- The blur may be detectable, setting this to false disables blur entirely
+    Theme = "Darker",
+    MinimizeKey = Enum.KeyCode.LeftControl -- Used when theres no MinimizeKeybind
+})
+
+local Tabs = {
+
+    MISC = Window:AddTab({ Title = "Misc", Icon = "" }),
+    MAIN = Window:AddTab({ Title = "Main", Icon = ""})
+
+
+
+
+local webhookUrl = ""
+local webhookTimer = 7200 -- Default to 2 hours in seconds
+local webhookEnabled = false
+
+local Tabs = {
+    MAIN = Window:AddTab({ Title = "Main", Icon = "" }),
+}
+
+-- Input to change the webhook URL
+local InputURL = Tabs.MAIN:AddInput("WebhookInput", {
+    Title = "Webhook URL",
+    Default = "",
+    Placeholder = "Enter your webhook URL",
+    Numeric = false,
+    Finished = false,
+    Callback = function(Value)
+        webhookUrl = Value
+    end
+})
+
+InputURL:OnChanged(function(Value)
+    webhookUrl = Value
+end)
+
+-- Input to change the delay time
+local InputDelay = Tabs.MAIN:AddInput("DelayInput", {
+    Title = "Webhook Interval (Seconds)",
+    Default = "7200",
+    Placeholder = "Enter interval in seconds",
+    Numeric = true,
+    Finished = false,
+    Callback = function(Value)
+        local numValue = tonumber(Value)
+        if numValue and numValue > 0 then
+            webhookTimer = numValue
+        end
+    end
+})
+
+InputDelay:OnChanged(function(Value)
+    local numValue = tonumber(Value)
+    if numValue and numValue > 0 then
+        webhookTimer = numValue
+    end
+end)
+
+-- Toggle to activate/deactivate webhook sending
+local Toggle = Tabs.MAIN:AddToggle("WebhookToggle", { Title = "Enable Webhook", Default = false })
+
+Toggle:OnChanged(function()
+    webhookEnabled = Toggle.Value
+    if webhookEnabled then
+        task.spawn(function()
+            while webhookEnabled do
+                if webhookUrl ~= "" then
+                    local data = {
+                        ["content"] = "Webhook sent successfully!",
+                        ["embeds"] = {{
+                            ["title"] = "Sol's RNG Eon1",
+                            ["description"] = "Webhook activated!",
+                            ["color"] = 65280, -- Green color
+                            ["fields"] = {
+                                {
+                                    ["name"] = "⏰ Time:",
+                                    ["value"] = os.date("!%a %b %d %X %Y", os.time() + 7 * 3600) -- GMT+7 timezone
+                                }
+                            }
+                        }}
+                    }
+
+                    local jsonData = game:GetService("HttpService"):JSONEncode(data)
+                    request({
+                        Url = webhookUrl,
+                        Method = "POST",
+                        Headers = { ["Content-Type"] = "application/json" },
+                        Body = jsonData
+                    })
+                end
+                task.wait(webhookTimer)
+            end
+        end)
+    end
+end)
