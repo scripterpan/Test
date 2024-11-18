@@ -45,7 +45,7 @@ local Tabs = {
     MISC = Window:AddTab({ Title = "Misc", Icon = "" }),
     MAIN = Window:AddTab({ Title = "Main", Icon = ""})
 
-
+}
 
 
 local webhookUrl = ""
