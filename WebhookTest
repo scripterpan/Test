@@ -52,6 +52,9 @@ local webhookUrl = ""
 local webhookTimer = 7200 -- Default to 2 hours in seconds
 local webhookEnabled = false
 
+local Tabs = {
+    MAIN = Window:AddTab({ Title = "Main", Icon = "" }),
+}
 
 -- Input to change the webhook URL
 local InputURL = Tabs.MAIN:AddInput("WebhookInput", {
@@ -71,7 +74,7 @@ end)
 
 -- Input to change the delay time
 local InputDelay = Tabs.MAIN:AddInput("DelayInput", {
-    Title = "Webhook Interval (Seconds)",
+    Title = "Interval (Seconds)",
     Default = "7200",
     Placeholder = "Enter interval in seconds",
     Numeric = true,
