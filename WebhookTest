@@ -51,10 +51,9 @@ local Tabs = {
 local webhookUrl = ""
 local webhookTimer = 7200 -- Default to 2 hours in seconds
 local webhookEnabled = false
+local discordId = "" -- To store the Discord ID to ping
 
-local Tabs = {
-    MAIN = Window:AddTab({ Title = "Main", Icon = "" }),
-}
+
 
 -- Input to change the webhook URL
 local InputURL = Tabs.MAIN:AddInput("WebhookInput", {
@@ -70,6 +69,22 @@ local InputURL = Tabs.MAIN:AddInput("WebhookInput", {
 
 InputURL:OnChanged(function(Value)
     webhookUrl = Value
+end)
+
+-- Input to add your Discord ID
+local InputDiscordID = Tabs.MAIN:AddInput("DiscordIDInput", {
+    Title = "Discord ID",
+    Default = "",
+    Placeholder = "Enter your Discord ID",
+    Numeric = true,
+    Finished = false,
+    Callback = function(Value)
+        discordId = Value
+    end
+})
+
+InputDiscordID:OnChanged(function(Value)
+    discordId = Value
 end)
 
 -- Input to change the delay time
@@ -103,8 +118,9 @@ Toggle:OnChanged(function()
         task.spawn(function()
             while webhookEnabled do
                 if webhookUrl ~= "" then
+                    local content = discordId ~= "" and ("<@" .. discordId .. ">") or "Webhook sent successfully!"
                     local data = {
-                        ["content"] = "Webhook sent successfully!",
+                        ["content"] = content,
                         ["embeds"] = {{
                             ["title"] = "Sol's RNG Eon1",
                             ["description"] = "Webhook activated!",
