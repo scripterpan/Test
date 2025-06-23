@@ -1,34 +1,5 @@
 
--- Key System (Simple Version)
-local expectedKey = "RAISEAFLOPPA2025" -- You can change this
-local Fluent = require(game:GetService("CoreGui"):WaitForChild("Fluent"))
 
-local function requestKey()
-    local success = false
-    while not success do
-        local key = Fluent:Prompt({
-            Title = "Key System",
-            Content = "Enter your key to use the script.",
-            Placeholder = "Your key here",
-            Buttons = {
-                { Title = "Submit", Primary = true },
-            }
-        })
-        
-        if key == expectedKey then
-            success = true
-        else
-            Fluent:Notify({
-                Title = "Invalid Key",
-                Content = "The key you entered is incorrect.",
-                Duration = 5
-            })
-            task.wait(1)
-        end
-    end
-end
-
-requestKey()
 
 
 repeat task.wait(0.25) until game:IsLoaded()
@@ -58,6 +29,60 @@ task.spawn(function()
         end)
     end
 end)
+
+repeat task.wait() until game:IsLoaded()
+
+-- KEY SYSTEM UI START 🔐
+getgenv().UserHasKey = false
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+
+local KeyWindow = Fluent:CreateWindow({
+    Title = "🔐 Key System",
+    SubTitle = "Pann Hub Access",
+    TabWidth = 130,
+    Size = UDim2.fromOffset(450, 230),
+    Acrylic = true,
+    Theme = "Darker",
+    MinimizeKey = Enum.KeyCode.RightControl
+})
+
+local KeyTab = KeyWindow:AddTab({ Title = "🔑 Enter Key", Icon = "" })
+local inputKey = ""
+
+KeyTab:AddInput("AccessKey", {
+    Title = "Enter your key to unlock GUI",
+    Placeholder = "e.g. RAISEAFLOPPA2025",
+    Default = "",
+    Callback = function(Value)
+        inputKey = Value
+    end
+})
+
+KeyTab:AddButton({
+    Title = "✅ Submit Key",
+    Description = "Checks if the key is valid",
+    Callback = function()
+        if inputKey == "RAISEAFLOPPA2025" then
+            Fluent:Notify({
+                Title = "Key Accepted ✅",
+                Content = "Access granted. Welcome to the hub!",
+                Duration = 5
+            })
+            getgenv().UserHasKey = true
+            KeyWindow:Close()
+        else
+            Fluent:Notify({
+                Title = "❌ Invalid Key",
+                Content = "Try again.",
+                Duration = 5
+            })
+        end
+    end
+})
+
+repeat task.wait() until getgenv().UserHasKey
+-- ✅ KEY SYSTEM UI END
+
 
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
