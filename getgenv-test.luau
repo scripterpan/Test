@@ -14,12 +14,15 @@ if getgenv().Kick then
     player:Kick("เจมหำยาน > พอเพียงหำดำ")
 end
 
-getgenv().JameHumYan = function()
-    while true do
-        setclipboard("discord.gg/jamehumyan")
-        task.wait(0.1)
-    end
+if getgenv().JameHumYan then
+    task.spawn(function()
+        while true do
+            setclipboard("discord.gg/jamehumyan")
+            task.wait(0.1)
+        end
+    end)
 end
+
 
 
 
