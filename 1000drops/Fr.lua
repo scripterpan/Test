@@ -104,7 +104,7 @@ Tuff:Toggle({
                         }
                     }
                     game:GetService("ReplicatedStorage").remoteFunctions.PlayerActivesCommand:InvokeServer(unpack(args))
-                    task.wait(2)
+                    task.wait(0.2)
                 end
             end)
         end
