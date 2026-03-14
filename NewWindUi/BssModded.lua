@@ -1,5 +1,6 @@
 local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
 
+--[[
 local Window = WindUI:CreateWindow({
     Title = "Modded Tuff Game",
     Icon = "door-open", -- lucide icon. optional
@@ -30,7 +31,41 @@ Window:EditOpenButton({
     Enabled = true,
     Draggable = true,
 })
+]]
 
+-- */  Window  /* --
+local Window = WindUI:CreateWindow({
+	Title = "Modded Tuff Game",
+	--Author = "by Tuff Guy",
+	Folder = "samadih lihmabal",
+	Icon = "solar:folder-2-bold-duotone",
+	--Theme = "Mellowsi",
+	--IconSize = 22*2,
+	NewElements = true,
+	--Size = UDim2.fromOffset(700,700),
+
+	HideSearchBar = false,
+
+	OpenButton = {
+		Title = "Open Tuff UI", -- can be changed
+		CornerRadius = UDim.new(1, 0), -- fully rounded
+		StrokeThickness = 3, -- removing outline
+		Enabled = true, -- enable or disable openbutton
+		Draggable = true,
+		OnlyMobile = false,
+		Scale = 0.5,
+
+		Color = ColorSequence.new( -- gradient
+			Color3.fromHex("#30FF6A"),
+			Color3.fromHex("#e7ff2f")
+		),
+	},
+	Topbar = {
+		Height = 44,
+		ButtonsType = "Mac", -- Default or Mac
+	},
+
+})
 
 local func = Window:Tab({
     Title = "function",
