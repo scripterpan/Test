@@ -110,3 +110,31 @@ Tuff:Toggle({
         end
     end
 })
+
+
+local stinger = false
+local stingerTask
+
+Tuff:Toggle({
+    Title = "Auto Stinger",
+    Desc = "Use Stinger every 30s",
+    Icon = "bird",
+    Type = "Toggle",
+    Value = false,
+    Callback = function(state)
+        stinger = state
+        if state then
+            stingerTask = task.spawn(function()
+                while stinger do
+                    local args = {
+                        [1] = {
+                            ["Name"] = "Stinger"
+                        }
+                    }
+                    game:GetService("ReplicatedStorage").remoteFunctions.PlayerActivesCommand:InvokeServer(unpack(args))
+                    task.wait(30)
+                end
+            end)
+        end
+    end
+})
