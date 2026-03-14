@@ -153,3 +153,70 @@ func:Toggle({
         end
     end
 })
+
+
+local player = game:GetService("Players").LocalPlayer
+
+local speedEnabled = false
+
+local defaultSpeed = 16
+local desiredSpeed = defaultSpeed
+
+local function setSpeed(speed)
+    if player.Character and player.Character:FindFirstChild("Humanoid") then
+        player.Character.Humanoid.WalkSpeed = speed
+    end
+end
+
+player.CharacterAdded:Connect(function()
+    repeat task.wait() until player.Character:FindFirstChild("Humanoid")
+    if speedEnabled then
+        setSpeed(desiredSpeed)
+    end
+end)
+
+func:Section({ Title = "Speed", Icon = "zap" })
+
+func:Toggle({
+    Title = "Speed Boost",
+    Desc = "Enable speed boost",
+    Icon = "zap",
+    Type = "Toggle",
+    Default = false,
+    Callback = function(state)
+        speedEnabled = state
+        if state then
+            setSpeed(desiredSpeed)
+            task.spawn(function()
+                while speedEnabled do
+                    if player.Character and player.Character:FindFirstChild("Humanoid") then
+                        if player.Character.Humanoid.WalkSpeed ~= desiredSpeed then
+                            setSpeed(desiredSpeed)
+                        end
+                    end
+                    task.wait(0.1)
+                end
+            end)
+        else
+            setSpeed(defaultSpeed)
+        end
+    end
+})
+
+func:Input({
+    Title = "Set Walk Speed",
+    Desc = "Type your speed value here (1–500)",
+    Placeholder = tostring(defaultSpeed),
+    InputIcon = "chevrons-up",
+    Type = "Input",
+    Value = tostring(desiredSpeed),
+    Callback = function(input)
+        local num = tonumber(input)
+        if num and num >= 1 and num <= 500 then
+            desiredSpeed = num
+            if speedEnabled then
+                setSpeed(desiredSpeed)
+            end
+        end
+    end
+})
