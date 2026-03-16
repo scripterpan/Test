@@ -155,6 +155,74 @@ func:Toggle({
 })
 
 
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer
+
+local AutoWalk = false
+local connection
+local size = 40
+
+local pattern = {
+	Vector3.new(0,0,-size),
+	Vector3.new(size,0,0),
+	Vector3.new(0,0,size),
+	Vector3.new(-size,0,0)
+}
+
+local step = 1
+local target
+
+local function getChar()
+	local char = player.Character or player.CharacterAdded:Wait()
+	return char:WaitForChild("Humanoid"), char:WaitForChild("HumanoidRootPart")
+end
+
+local function startWalk()
+	local humanoid, hrp = getChar()
+	target = hrp.Position + pattern[step]
+
+	connection = RunService.Heartbeat:Connect(function()
+		if not AutoWalk then return end
+
+		local humanoid, hrp = getChar()
+		humanoid:MoveTo(target)
+
+		if (hrp.Position - target).Magnitude < 3 then
+			step += 1
+			if step > #pattern then
+				step = 1
+			end
+			target = hrp.Position + pattern[step]
+		end
+	end)
+end
+
+local function ToggleAutoWalk(state)
+	AutoWalk = state
+	if state then
+		startWalk()
+	else
+		if connection then
+			connection:Disconnect()
+			connection = nil
+		end
+	end
+end
+
+func:Toggle({
+	Title = "Auto Walk",
+	Desc = "Square Auto Walk",
+	Icon = "bird",
+	Type = "Toggle",
+	Value = false,
+	Callback = function(state)
+		ToggleAutoWalk(state)
+	end
+})
+
+
 local player = game:GetService("Players").LocalPlayer
 
 local speedEnabled = false
